@@ -1,0 +1,23 @@
+# pyproject.toml
+
+[build-system]
+requires      = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "boopy"
+version = "0.1.1"
+description = "An educational package for construction of fixed income yield curves."
+readme = "README.md"
+authors = [{ name = "Kiar Fatah"}]
+keywords = ["interest rate", "fixed income", "swaps", "deposits", "forward rate agreements"]
+requires-python = ">=3.9"
+
+[project.optional-dependencies]
+dev = [
+    "sphinx>=5.1.1",
+]
+
+[tool.setuptools]
+packages = ["boopy"]
+
