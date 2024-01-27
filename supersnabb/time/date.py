@@ -1,6 +1,21 @@
+from datetime import date as dt
+
+
 class Date:
-    def __init__(self):
-        raise NotImplementedError
+    """
+    Represents a custom type for dates.
+
+    Parameters
+    ----------
+    date : str
+        The date string, e.g. "2020-01-01".
+    """
+
+    def __init__(self, year: int, month: int, day: int):
+        if not isinstance([year, month, day], int):
+            raise ValueError("year, month and day must be integers")
+        else:
+            self._date = dt(year, month, day)
 
 
 class Tenor:
