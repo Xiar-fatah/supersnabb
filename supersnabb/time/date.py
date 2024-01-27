@@ -1,3 +1,4 @@
+from __future__ import annotations
 from datetime import date as date
 from dateutil.relativedelta import relativedelta
 
@@ -90,7 +91,42 @@ class Date:
         return (self._dt - self._dt(self._dt.year, 1, 1)).days + 1
 
     def _timedelta(self, value: int) -> date:
-        return self._dt + relativedelta(days=int)
+        dt = self._dt + relativedelta(days=value)
+        return Date(dt.year, dt.month, dt.day)
+
+    def __add__(self, value: date | Date):
+        if isinstance(value, date):
+            return Date(self._dt.year, self._dt.month, self._dt.day + value.day)
+        if isinstance(value, Date):
+            return Date(
+                self._dt.year + value._dt.year,
+                self._dt.month + value._dt.month,
+                self._dt.day + value._dt.day,
+            )
+        else:
+            raise ValueError(
+                "Date needs to be added with an datetime.date or Date object"
+            )
+
+    def __radd__(self, value: date | Date):
+        return self.__add__(value)
+
+    def __sub__(self, value: date | Date):
+        if isinstance(value, date):
+            return Date(self._dt.year, self._dt.month, self._dt.day - value.day)
+        if isinstance(value, Date):
+            return Date(
+                self._dt.year - value._dt.year,
+                self._dt.month - value._dt.month,
+                self._dt.day - value._dt.day,
+            )
+        else:
+            raise ValueError(
+                "Date needs to be subtracted with an datetime.date or Date object"
+            )
+
+    def __rsub__(self, value: date | Date):
+        return self.__sub__(value)
 
 
 class Tenor:
@@ -125,7 +161,7 @@ class Tenor:
     def __repr__(self):
         return self._tenor
 
-    def __add__(self, value):
+    def __add__(self, value) -> Tenor:
         if isinstance(value, date):
             return self._add_tenor_to_date(value, self.length, self.unit, "add")
         elif isinstance(value, Tenor):
@@ -136,7 +172,10 @@ class Tenor:
             value = Tenor(value)
             return self + value
 
-    def __sub__(self, value):
+    def _radd__(self, value) -> Tenor:
+        return self.__add__(value)
+
+    def __sub__(self, value) -> Tenor:
         if isinstance(value, date):
             return self._add_tenor_to_date(value, self.length, self.unit, "sub")
         elif isinstance(value, Tenor):
@@ -146,6 +185,9 @@ class Tenor:
         else:
             value = Tenor(value)
             return self - value
+
+    def __rsub__(self, value) -> Tenor:
+        return self.__sub__(value)
 
     def _add_tenor_to_date(self, dt: date, length: int, unit: str, func: str) -> date:
         """
@@ -182,7 +224,7 @@ class Tenor:
             else:
                 return dt + relativedelta(years=length)
 
-    def __mul__(self, value: int):
+    def __mul__(self, value: int) -> Tenor:
         if not isinstance(value, int):
             raise ValueError("Tenor needs to be multiplied with an integer")
         return Tenor(str(self.length * value) + self.unit)

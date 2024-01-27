@@ -12,9 +12,9 @@ class Sweden(Calendar):
         if not isinstance(dt, Date):
             raise TypeError(f"dt must be a Date object, received: {dt}")
 
-        easter_monday = dt._calc_day_of_year(
+        easter_monday = (
             easter.easter(dt._year(), 3) + dt._timedelta(1)
-        )
+        )._calc_day_of_year()
         if (
             dt._is_weekend()
             # Good Friday

@@ -3,10 +3,6 @@ from supersnabb.time.calendar.sweden import Sweden
 import QuantLib as ql
 
 
-def test_swedish_calendar_ql():
-    raise NotImplementedError
-
-
 def test_swedish_calendar():
     assert Sweden().is_holiday(Date(2023, 1, 6)) is True
     assert Sweden().is_holiday(Date(2023, 4, 2)) is True
