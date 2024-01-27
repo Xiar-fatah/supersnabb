@@ -21,73 +21,76 @@ class Date:
         if not all(isinstance(date_args, int) for date_args in [year, month, day]):
             raise ValueError("year, month and day must be integers")
         else:
-            self._date = date(year, month, day)
+            self._dt = date(year, month, day)
 
-    def _week_day(self, dt: date) -> int:
+    def _week_day(self) -> int:
         """
         Returns the weekday of a date. For example date(2023,1,1) would be a Monday, i.e., 0.
 
         dt: date
             The date of which to calculate the weekday.
         """
-        return dt.weekday()
+        return self._dt.weekday()
 
-    def _day_of_month(self, dt: date) -> int:
+    def _day_of_month(self) -> int:
         """
         Returns the day of the month. For example date(2023,1,1) would be the first day of the month, i.e., 1.
 
         dt: date
             The date of which to calculate the day of month.
         """
-        return dt.day
+        return self._dt.day
 
-    def _day_of_year(self, dt: date) -> int:
+    def _day_of_year(self) -> int:
         """
         Returns the day of the year. For example date(2023,1,1) would be the first day of the year, i.e., 1.
 
         dt: date
             The date of which to calculate the day of year.
         """
-        return (dt - dt(dt.year, 1, 1)).days + 1
+        return (self._dt - self._dt(self._dt.year, 1, 1)).days + 1
 
-    def _year(self, dt: date) -> int:
+    def _year(self) -> int:
         """
         Returns the year of a date. For example date(2023,1,1) would be 2023.
 
         dt: date
             The date of which to calculate the year.
         """
-        return dt.year
+        return self._dt.year
 
-    def _month(self, dt: date) -> int:
+    def _month(self) -> int:
         """
         Returns the month of a date. For example date(2023,1,1) would be January, i.e., 1.
 
         dt: date
             The date of which to calculate the month.
         """
-        return dt.month
+        return self._dt.month
 
-    def _is_weekend(self, date: date) -> bool:
+    def _is_weekend(self) -> bool:
         """
         Returns true if date such as date(2023,1,2) is a weekend else false.
 
         date : date
             is a date object such as date(2023,1,2)
         """
-        if date.weekday() < 5:
+        if self._dt.weekday() < 5:
             return False
         else:
             return True
 
-    def _calc_day_of_year(self, date: date) -> int:
+    def _calc_day_of_year(self) -> int:
         """
         Calculates the day of the year. For example date(2023,1,1) would be the first day of the year, i.e., 1.
 
         date : date
             The date of which to calculate the day of year.
         """
-        return (date - date(date.year, 1, 1)).days + 1
+        return (self._dt - self._dt(self._dt.year, 1, 1)).days + 1
+
+    def _timedelta(self, value: int) -> date:
+        return self._dt + relativedelta(days=int)
 
 
 class Tenor:
