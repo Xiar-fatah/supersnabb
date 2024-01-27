@@ -1,0 +1,10 @@
+Metadata-Version: 2.1
+Name: boopy
+Version: 0.1.1
+Summary: An educational package for construction of fixed income yield curves.
+Author: Kiar Fatah
+Keywords: interest rate,fixed income,swaps,deposits,forward rate agreements
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Provides-Extra: dev
+Requires-Dist: sphinx>=5.1.1; extra == "dev"

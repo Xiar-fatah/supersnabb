@@ -1,4 +1,4 @@
-from datetime import date as dt
+from datetime import date
 
 
 class Date:
@@ -12,10 +12,76 @@ class Date:
     """
 
     def __init__(self, year: int, month: int, day: int):
-        if not isinstance([year, month, day], int):
+        if not all(isinstance(date_args, int) for date_args in [year, month, day]):
             raise ValueError("year, month and day must be integers")
         else:
             self._date = dt(year, month, day)
+
+    def _week_day(self, date: dt) -> int:
+        """
+        Returns the weekday of a date. For example dt(2023,1,1) would be a Monday, i.e., 0.
+
+        date : dt
+            The date of which to calculate the weekday.
+        """
+        return date.weekday()
+
+    def _day_of_month(self, date: dt) -> int:
+        """
+        Returns the day of the month. For example dt(2023,1,1) would be the first day of the month, i.e., 1.
+
+        date : dt
+            The date of which to calculate the day of month.
+        """
+        return date.day
+
+    def _day_of_year(self, date: dt) -> int:
+        """
+        Returns the day of the year. For example dt(2023,1,1) would be the first day of the year, i.e., 1.
+
+        date : dt
+            The date of which to calculate the day of year.
+        """
+        return (date - dt(date.year, 1, 1)).days + 1
+
+    def _year(self, date: dt) -> int:
+        """
+        Returns the year of a date. For example dt(2023,1,1) would be 2023.
+
+        date : dt
+            The date of which to calculate the year.
+        """
+        return date.year
+
+    def _month(self, date: dt) -> int:
+        """
+        Returns the month of a date. For example dt(2023,1,1) would be January, i.e., 1.
+
+        date : dt
+            The date of which to calculate the month.
+        """
+        return date.month
+
+    def _is_weekend(self, date: dt) -> bool:
+        """
+        Returns true if date such as date(2023,1,2) is a weekend else false.
+
+        date : date
+            is a date object such as date(2023,1,2)
+        """
+        if date.weekday() < 5:
+            return False
+        else:
+            return True
+
+    def _calc_day_of_year(self, date: dt) -> int:
+        """
+        Calculates the day of the year. For example dt(2023,1,1) would be the first day of the year, i.e., 1.
+
+        date : dt
+            The date of which to calculate the day of year.
+        """
+        return (date - dt(date.year, 1, 1)).days + 1
 
 
 class Tenor:

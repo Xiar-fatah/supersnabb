@@ -5,7 +5,7 @@ requires      = ["setuptools>=61.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "boopy"
+name = "supersnabb"
 version = "0.1.1"
 description = "An educational package for construction of fixed income yield curves."
 readme = "README.md"
@@ -19,5 +19,5 @@ dev = [
 ]
 
 [tool.setuptools]
-packages = ["boopy"]
+packages = ["supersnabb"]
 

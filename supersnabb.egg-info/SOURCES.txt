@@ -1,0 +1,8 @@
+pyproject.toml
+setup.py
+supersnabb/__init__.py
+supersnabb.egg-info/PKG-INFO
+supersnabb.egg-info/SOURCES.txt
+supersnabb.egg-info/dependency_links.txt
+supersnabb.egg-info/requires.txt
+supersnabb.egg-info/top_level.txt
