@@ -1,1 +1,1 @@
-from supersnabb.time.date import Date
+from supersnabb.time.date import Date, Tenor

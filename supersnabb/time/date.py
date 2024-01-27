@@ -1,4 +1,5 @@
-from datetime import date
+from datetime import date as date
+from dateutil.relativedelta import relativedelta
 
 
 class Date:
@@ -7,62 +8,67 @@ class Date:
 
     Parameters
     ----------
-    date : str
-        The date string, e.g. "2020-01-01".
+    year: int
+        The year of the date.
+    month: int
+        The month of the date.
+    day: int
+        The day of the date.
+
     """
 
     def __init__(self, year: int, month: int, day: int):
         if not all(isinstance(date_args, int) for date_args in [year, month, day]):
             raise ValueError("year, month and day must be integers")
         else:
-            self._date = dt(year, month, day)
+            self._date = date(year, month, day)
 
-    def _week_day(self, date: dt) -> int:
+    def _week_day(self, dt: date) -> int:
         """
-        Returns the weekday of a date. For example dt(2023,1,1) would be a Monday, i.e., 0.
+        Returns the weekday of a date. For example date(2023,1,1) would be a Monday, i.e., 0.
 
-        date : dt
+        dt: date
             The date of which to calculate the weekday.
         """
-        return date.weekday()
+        return dt.weekday()
 
-    def _day_of_month(self, date: dt) -> int:
+    def _day_of_month(self, dt: date) -> int:
         """
-        Returns the day of the month. For example dt(2023,1,1) would be the first day of the month, i.e., 1.
+        Returns the day of the month. For example date(2023,1,1) would be the first day of the month, i.e., 1.
 
-        date : dt
+        dt: date
             The date of which to calculate the day of month.
         """
-        return date.day
+        return dt.day
 
-    def _day_of_year(self, date: dt) -> int:
+    def _day_of_year(self, dt: date) -> int:
         """
-        Returns the day of the year. For example dt(2023,1,1) would be the first day of the year, i.e., 1.
+        Returns the day of the year. For example date(2023,1,1) would be the first day of the year, i.e., 1.
 
-        date : dt
+        dt: date
             The date of which to calculate the day of year.
         """
-        return (date - dt(date.year, 1, 1)).days + 1
+        return (dt - dt(dt.year, 1, 1)).days + 1
 
-    def _year(self, date: dt) -> int:
+    def _year(self, dt: date) -> int:
         """
-        Returns the year of a date. For example dt(2023,1,1) would be 2023.
+        Returns the year of a date. For example date(2023,1,1) would be 2023.
 
-        date : dt
+        dt: date
             The date of which to calculate the year.
         """
-        return date.year
+        return dt.year
 
-    def _month(self, date: dt) -> int:
+    def _month(self, dt: date) -> int:
         """
-        Returns the month of a date. For example dt(2023,1,1) would be January, i.e., 1.
+        Returns the month of a date. For example date(2023,1,1) would be January, i.e., 1.
 
-        date : dt
+        dt: date
             The date of which to calculate the month.
         """
-        return date.month
+        return dt.month
 
-    def _is_weekend(self, date: dt) -> bool:
+    def _is_weekend(self, date: date) -> bool:
         """
         Returns true if date such as date(2023,1,2) is a weekend else false.
 
@@ -74,14 +80,14 @@ class Date:
         else:
             return True
 
-    def _calc_day_of_year(self, date: dt) -> int:
+    def _calc_day_of_year(self, date: date) -> int:
         """
-        Calculates the day of the year. For example dt(2023,1,1) would be the first day of the year, i.e., 1.
+        Calculates the day of the year. For example date(2023,1,1) would be the first day of the year, i.e., 1.
 
-        date : dt
+        date : date
             The date of which to calculate the day of year.
         """
-        return (date - dt(date.year, 1, 1)).days + 1
+        return (date - date(date.year, 1, 1)).days + 1
 
 
 class Tenor:
@@ -115,3 +121,65 @@ class Tenor:
 
     def __repr__(self):
         return self._tenor
+
+    def __add__(self, value):
+        if isinstance(value, date):
+            return self._add_tenor_to_date(value, self.length, self.unit, "add")
+        elif isinstance(value, Tenor):
+            if self.unit != value.unit:
+                raise ValueError("cannot add tenors of different units")
+            return Tenor(str(self.length + value.length) + self.unit)
+        else:
+            value = Tenor(value)
+            return self + value
+
+    def __sub__(self, value):
+        if isinstance(value, date):
+            return self._add_tenor_to_date(value, self.length, self.unit, "sub")
+        elif isinstance(value, Tenor):
+            if self.unit != value.unit:
+                raise ValueError("cannot add tenors of different units")
+            return Tenor(str(self.length - value.length) + self.unit)
+        else:
+            value = Tenor(value)
+            return self - value
+
+    def _add_tenor_to_date(self, dt: date, length: int, unit: str, func: str) -> date:
+        """
+        Returns d + n*unit. Meaning that datetime.date(2023,1,1) + Tenor("1D") would return datetime.date(2023,1,2).
+        Note that if the unit is negative then the date will be subtracted instead of added.
+
+        Parameters
+        ----------
+        date : datetime.date
+            The date to add the tenor to.
+        fixing : int
+            The number of units to add to the date.
+        time_unit : str
+            The unit of the tenor, can be "D", "W", "M" or "Y".
+        """
+        if unit == "D":
+            if func == "sub":
+                return dt - relativedelta(days=length)
+            else:
+                return dt + relativedelta(days=length)
+        elif unit == "W":
+            if func == "sub":
+                return dt - relativedelta(weeks=length)
+            else:
+                return dt + relativedelta(weeks=length)
+        elif unit == "M":
+            if func == "sub":
+                return dt - relativedelta(months=length)
+            else:
+                return dt + relativedelta(months=length)
+        elif unit == "Y":
+            if func == "sub":
+                return dt - relativedelta(years=length)
+            else:
+                return dt + relativedelta(years=length)
+
+    def __mul__(self, value: int):
+        if not isinstance(value, int):
+            raise ValueError("Tenor needs to be multiplied with an integer")
+        return Tenor(str(self.length * value) + self.unit)

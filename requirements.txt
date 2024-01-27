@@ -1,1 +1,4 @@
-QuantLib
+QuantLib=1.33
+python-dateutil
+ruff=0.1.14
+pytest=7.4.4
