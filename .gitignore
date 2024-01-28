@@ -1,15 +1,16 @@
 __pycache__/
-supersnabb/__pycache__/
+
+# Byte-compiled / optimized / DLL files
 *.py[cod]
+
+# notebooks
 .ipynb_checkpoints
 notebooks/
 *.ipynb
 
+# Coverage
+tests/htmlcov/
+.coverage
+# Conda
 .conda
 
-*.pyc
-*.ipynb
-*.pyc
-*.pyc
-.coverage
-*.ipynb
