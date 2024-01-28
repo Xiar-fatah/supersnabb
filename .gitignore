@@ -11,6 +11,7 @@ notebooks/
 # Coverage
 tests/htmlcov/
 .coverage
+
 # Conda
 .conda
 
