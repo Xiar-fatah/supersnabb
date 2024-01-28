@@ -3,7 +3,7 @@ supersnabb/__pycache__/
 *.py[cod]
 .ipynb_checkpoints
 notebooks/
-*.ipynb/
+*.ipynb
 
 .conda
 
@@ -11,3 +11,5 @@ notebooks/
 *.ipynb
 *.pyc
 *.pyc
+.coverage
+*.ipynb
