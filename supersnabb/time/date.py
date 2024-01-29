@@ -28,44 +28,67 @@ class Date:
             raise ValueError("month must be between 1 and 12")
         if d < 1 or d > 31:
             raise ValueError("day must be between 1 and 31")
-        self.y = y
-        self.m = m
-        self.d = d
         self.leap = self._is_leap(y)
-        self.date = datetime.date(y, m, d)
         # day_length = self._month_length(month, leap)
         self.month_offset = self._month_offset(m, self.leap)
         year_offset = self._year_offset(y)
 
         self.serial_number = d + self.month_offset + year_offset
 
+    def __rsub__(self, days: int) -> Date:
+        return self.__add__(days)
+
+    def __sub__(self, days: int) -> Date:
+        self.serial_number -= days
+        return self
+
+    def __radd__(self, days: int) -> Date:
+        return self.__add__(days)
+
+    def __add__(self, days: int) -> Date:
+        self.serial_number += days
+        return self
+
+    def day_of_month(self) -> int:
+        """
+        Returns the day of the month for the date.
+        """
+        return self.date().day
+
+    def date(self) -> datetime.date:
+        """
+        Calculates the date from the serial number.
+        """
+        start_date = datetime.date(1899, 12, 30)
+        return start_date + datetime.timedelta(days=self.serial_number)
+
     def is_week(self) -> bool:
         """
         Returns True if the date is a weekend.
         """
-        return self.date.weekday() > 4
+        return self.date().weekday() > 4
 
     def weekday(self) -> int:
         """
         Returns the day of the week for the date.
         """
-        return self.date.weekday()
+        return self.date().weekday()
 
     def easter_monday(self) -> datetime.date:
         """
         Calculates eastern monday for the year of the date.
         """
-        em_date = easter.easter(self.date.year) + datetime.timedelta(days=1)
+        em_date = easter.easter(self.date().year) + datetime.timedelta(days=1)
         em_day_of_year = em_date.timetuple().tm_yday
         return em_day_of_year
 
     def day_of_year(self) -> int:
-        return self.month_offset + self.d
+        return self.month_offset + self.day_of_month()
 
     def month(self) -> int:
         # Is this class needed?
         d = self.day_of_year()
-        m = int(d / 30) + 1
+        m = int(self.day_of_month() / 30) + 1
 
         while d <= self._month_offset(m, self.leap):
             m -= 1

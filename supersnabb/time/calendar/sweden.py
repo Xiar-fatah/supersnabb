@@ -12,10 +12,10 @@ class Sweden(Calendar):
         if not isinstance(dt, Date):
             raise TypeError(f"dt must be a Date object, received: {dt}")
         w = dt.weekday()
-        d = dt.date.day  # dayOfMonth
+        d = dt.day_of_month()  # dayOfMonth
         dd = dt.day_of_year()
-        m = dt.m
-        y = dt.y
+        m = dt.month()
+        y = dt.year()
         easter_monday = dt.easter_monday()
         if (
             dt.is_week()
