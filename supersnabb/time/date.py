@@ -2,6 +2,111 @@ from __future__ import annotations
 import datetime
 from dateutil.relativedelta import relativedelta
 from dateutil import easter  # Only needed for Easter Monday
+from typing import Optional
+
+
+class Tenor:
+    """
+    Represents a custom type for tenors.
+
+    Parameters
+    ----------
+    tenor : str
+        The tenor string, e.g. "1D", "1W", "1M", "1Y".
+    """
+
+    def __init__(self, tenor: str):
+        # Check that tenor is a string and fulfills the format
+        if not isinstance(tenor, str):
+            raise ValueError("tenor must be a string")
+        if tenor[-1].upper() not in ["D", "W", "M", "Y"]:
+            raise ValueError("tenor must end with D, W, M or Y")
+        if tenor[0] == "-":
+            self.length = int(tenor[:-1])
+            if tenor[1:-1].isdigit() is not True:
+                raise ValueError("tenor must start with a number")
+
+        elif not tenor[:-1].isdigit():
+            raise ValueError("tenor must start with a number")
+        else:
+            self.length = int(tenor[:-1])
+
+        self._tenor = tenor.upper()
+        self.unit = self._tenor[-1]
+
+    def __repr__(self):
+        return self._tenor
+
+    def __add__(self, value) -> Tenor:
+        print(f"{value = }")
+        if isinstance(value.date(), datetime.date):
+            return self._add_tenor_to_date(value, self.length, self.unit, "add")
+        elif isinstance(value, Tenor):
+            if self.unit != value.unit:
+                raise ValueError("cannot add tenors of different units")
+            return Tenor(str(self.length + value.length) + self.unit)
+        else:
+            value = Tenor(value)
+            return self + value
+
+    def _radd__(self, value) -> Tenor:
+        return self.__add__(value)
+
+    def __sub__(self, value) -> Tenor:
+        if isinstance(value, Date):
+            return self._add_tenor_to_date(value, self.length, self.unit, "sub")
+        elif isinstance(value, Tenor):
+            if self.unit != value.unit:
+                raise ValueError("cannot add tenors of different units")
+            return Tenor(str(self.length - value.length) + self.unit)
+        else:
+            value = Tenor(value)
+            return self - value
+
+    def __rsub__(self, value) -> Tenor:
+        return self.__sub__(value)
+
+    def _add_tenor_to_date(
+        self, dt: Date, length: int, unit: str, func: str
+    ) -> datetime.date:
+        """
+        Returns d + n*unit. Meaning that datetime.date(2023,1,1) + Tenor("1D") would return datetime.date(2023,1,2).
+        Note that if the unit is negative then the date will be subtracted instead of added.
+
+        Parameters
+        ----------
+        date : datetime.date
+            The date to add the tenor to.
+        fixing : int
+            The number of units to add to the date.
+        time_unit : str
+            The unit of the tenor, can be "D", "W", "M" or "Y".
+        """
+        if unit == "D":
+            if func == "sub":
+                return dt - relativedelta(days=length)
+            else:
+                return dt + relativedelta(days=length)
+        elif unit == "W":
+            if func == "sub":
+                return dt - relativedelta(weeks=length)
+            else:
+                return dt + relativedelta(weeks=length)
+        elif unit == "M":
+            if func == "sub":
+                return dt - relativedelta(months=length)
+            else:
+                return dt + relativedelta(months=length)
+        elif unit == "Y":
+            if func == "sub":
+                return dt - relativedelta(years=length)
+            else:
+                return dt + relativedelta(years=length)
+
+    def __mul__(self, value: int) -> Tenor:
+        if not isinstance(value, int):
+            raise ValueError("Tenor needs to be multiplied with an integer")
+        return Tenor(str(self.length * value) + self.unit)
 
 
 class Date:
@@ -28,6 +133,10 @@ class Date:
             raise ValueError("month must be between 1 and 12")
         if d < 1 or d > 31:
             raise ValueError("day must be between 1 and 31")
+        try:
+            datetime.date(y, m, d)
+        except ValueError:
+            raise ValueError("The given input for date are not valid")
         self.leap = self._is_leap(y)
         # day_length = self._month_length(month, leap)
         self.month_offset = self._month_offset(m, self.leap)
@@ -35,19 +144,27 @@ class Date:
 
         self.serial_number = d + self.month_offset + year_offset
 
+    def ISO(self) -> str:
+        """
+        Returns the date in ISO format, e.g. 2023-01-01.
+        """
+        return self.date().isoformat()
+
     def __rsub__(self, days: int) -> Date:
         return self.__add__(days)
 
     def __sub__(self, days: int) -> Date:
-        self.serial_number -= days
-        return self
+        serial_number = self.serial_number - days
+        new_date = self.date(serial_number)
+        return Date(new_date.year, new_date.month, new_date.day)
 
     def __radd__(self, days: int) -> Date:
         return self.__add__(days)
 
     def __add__(self, days: int) -> Date:
-        self.serial_number += days
-        return self
+        serial_number = self.serial_number + days
+        new_date = self.date(serial_number)
+        return Date(new_date.year, new_date.month, new_date.day)
 
     def day_of_month(self) -> int:
         """
@@ -55,12 +172,15 @@ class Date:
         """
         return self.date().day
 
-    def date(self) -> datetime.date:
+    def date(self, serial_number: Optional[int] = None) -> datetime.date:
         """
-        Calculates the date from the serial number.
+        Calculates the date from the serial number. Can also be used to calculate the date from a given serial number.
         """
         start_date = datetime.date(1899, 12, 30)
-        return start_date + datetime.timedelta(days=self.serial_number)
+        if serial_number is not None:
+            return start_date + datetime.timedelta(days=serial_number)
+        else:
+            return start_date + datetime.timedelta(days=self.serial_number)
 
     def is_week(self) -> bool:
         """
@@ -816,106 +936,3 @@ class Date:
             False,
         ]
         return year_is_leap[year - 1900]
-
-
-class Tenor:
-    """
-    Represents a custom type for tenors.
-
-    Parameters
-    ----------
-    tenor : str
-        The tenor string, e.g. "1D", "1W", "1M", "1Y".
-    """
-
-    def __init__(self, tenor: str):
-        # Check that tenor is a string and fulfills the format
-        if not isinstance(tenor, str):
-            raise ValueError("tenor must be a string")
-        if tenor[-1].upper() not in ["D", "W", "M", "Y"]:
-            raise ValueError("tenor must end with D, W, M or Y")
-        if tenor[0] == "-":
-            self.length = int(tenor[:-1])
-            if tenor[1:-1].isdigit() is not True:
-                raise ValueError("tenor must start with a number")
-
-        elif not tenor[:-1].isdigit():
-            raise ValueError("tenor must start with a number")
-        else:
-            self.length = int(tenor[:-1])
-
-        self._tenor = tenor.upper()
-        self.unit = self._tenor[-1]
-
-    def __repr__(self):
-        return self._tenor
-
-    def __add__(self, value) -> Tenor:
-        if isinstance(value, datetime.date):
-            return self._add_tenor_to_date(value, self.length, self.unit, "add")
-        elif isinstance(value, Tenor):
-            if self.unit != value.unit:
-                raise ValueError("cannot add tenors of different units")
-            return Tenor(str(self.length + value.length) + self.unit)
-        else:
-            value = Tenor(value)
-            return self + value
-
-    def _radd__(self, value) -> Tenor:
-        return self.__add__(value)
-
-    def __sub__(self, value) -> Tenor:
-        if isinstance(value, datetime.date):
-            return self._add_tenor_to_date(value, self.length, self.unit, "sub")
-        elif isinstance(value, Tenor):
-            if self.unit != value.unit:
-                raise ValueError("cannot add tenors of different units")
-            return Tenor(str(self.length - value.length) + self.unit)
-        else:
-            value = Tenor(value)
-            return self - value
-
-    def __rsub__(self, value) -> Tenor:
-        return self.__sub__(value)
-
-    def _add_tenor_to_date(
-        self, dt: datetime.date, length: int, unit: str, func: str
-    ) -> datetime.date:
-        """
-        Returns d + n*unit. Meaning that datetime.date(2023,1,1) + Tenor("1D") would return datetime.date(2023,1,2).
-        Note that if the unit is negative then the date will be subtracted instead of added.
-
-        Parameters
-        ----------
-        date : datetime.date
-            The date to add the tenor to.
-        fixing : int
-            The number of units to add to the date.
-        time_unit : str
-            The unit of the tenor, can be "D", "W", "M" or "Y".
-        """
-        if unit == "D":
-            if func == "sub":
-                return dt - relativedelta(days=length)
-            else:
-                return dt + relativedelta(days=length)
-        elif unit == "W":
-            if func == "sub":
-                return dt - relativedelta(weeks=length)
-            else:
-                return dt + relativedelta(weeks=length)
-        elif unit == "M":
-            if func == "sub":
-                return dt - relativedelta(months=length)
-            else:
-                return dt + relativedelta(months=length)
-        elif unit == "Y":
-            if func == "sub":
-                return dt - relativedelta(years=length)
-            else:
-                return dt + relativedelta(years=length)
-
-    def __mul__(self, value: int) -> Tenor:
-        if not isinstance(value, int):
-            raise ValueError("Tenor needs to be multiplied with an integer")
-        return Tenor(str(self.length * value) + self.unit)

@@ -1,5 +1,6 @@
 from supersnabb.time.date import Date
 from supersnabb.time.calendar.sweden import Sweden
+from supersnabb.time.business_day_convention import BusinessDayConvention
 import QuantLib as ql
 from datetime import date
 from dateutil.relativedelta import relativedelta
@@ -11,8 +12,33 @@ def test_swedish_calendar_ql():
     for idx in range(num_dates):
         dt = dt + relativedelta(days=1)
         ql_dt = ql.Date(dt.day, dt.month, dt.year)
-        ql_ss = Date(dt.year, dt.month, dt.day)
-        assert ql.Sweden().isBusinessDay(ql_dt) == Sweden().is_business_day(ql_ss)
+        ss_dt = Date(dt.year, dt.month, dt.day)
+        ql_sweden = ql.Sweden()
+        assert ql_sweden.isBusinessDay(ql_dt) == Sweden().is_business_day(ss_dt)
+        assert (
+            ql_sweden.adjust(ql_dt, ql.Following).ISO()
+            == Sweden().adjust(ss_dt, BusinessDayConvention.FOLLOWING).ISO()
+        )
+        assert (
+            ql_sweden.adjust(ql_dt, ql.ModifiedFollowing).ISO()
+            == Sweden().adjust(ss_dt, BusinessDayConvention.MODIFIEDFOLLOWING).ISO()
+        )
+        assert (
+            ql_sweden.adjust(ql_dt, ql.Preceding).ISO()
+            == Sweden().adjust(ss_dt, BusinessDayConvention.PRECEDING).ISO()
+        )
+        assert (
+            ql_sweden.adjust(ql_dt, ql.ModifiedPreceding).ISO()
+            == Sweden().adjust(ss_dt, BusinessDayConvention.MODIFIEDPRECEDING).ISO()
+        )
+        assert (
+            ql_sweden.adjust(ql_dt, ql.Nearest).ISO()
+            == Sweden().adjust(ss_dt, BusinessDayConvention.NEAREST).ISO()
+        )
+        assert (
+            ql_sweden.adjust(ql_dt, ql.Unadjusted).ISO()
+            == Sweden().adjust(ss_dt, BusinessDayConvention.UNADJUSTED).ISO()
+        )
 
 
 def test_swedish_calendar():

@@ -1,12 +1,14 @@
-from calendar import Calendar
+from supersnabb.time.calendar.calendar import Calendar
 from supersnabb.time.date import Date
-from dateutil import easter  # Only needed for Easter Monday
 
 
 class Sweden(Calendar):
     """
     Returns true if input is a business day in Sweden else false.
     """
+
+    def __init__(self):
+        pass
 
     def is_business_day(self, dt: Date):
         if not isinstance(dt, Date):
