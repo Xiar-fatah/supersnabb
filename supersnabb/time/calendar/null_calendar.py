@@ -1,8 +1,11 @@
-from calendar import Calendar
+from supersnabb.time.calendar.calendar import Calendar
 from supersnabb.time.date import Date
 
 
 class NullCalendar(Calendar):
+    def __init__(self):
+        pass
+
     def is_business_day(self, dt: Date):
         """
         A null calendar to calculate dates for schedule. Contains no holidays but check for weekends.

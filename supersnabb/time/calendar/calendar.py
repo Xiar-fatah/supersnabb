@@ -67,11 +67,6 @@ class Calendar(metaclass=ABCMeta):
             raise ValueError("Unknown business-day convention")
         return date1
 
-    def advance_with_tenor(
-        self: Calendar, date: Date, tenor: Tenor, convention: BusinessDayConvention
-    ) -> Date:
-        pass  # return self.advance(date, tenor, convention
-
     def advance(
         self,
         date: Date,
@@ -93,6 +88,8 @@ class Calendar(metaclass=ABCMeta):
             The calendar used to determine whether a date is a business day or not.
 
         """
+        if not isinstance(date, Date):
+            raise ValueError(f"date is not of the type Date, recieved: {type(date)}")
         n = advance_period.length
         if n == 0:
             return self.adjust(date, convention)

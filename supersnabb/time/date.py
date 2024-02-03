@@ -38,7 +38,6 @@ class Tenor:
         return self._tenor
 
     def __add__(self, value) -> Tenor:
-        print(f"{value = }")
         if isinstance(value, Date):
             return self._add_tenor_to_date(value, self.length, self.unit, "add")
         elif isinstance(value, Tenor):
@@ -167,6 +166,24 @@ class Date:
         serial_number = self.serial_number + days
         new_date = self.date(serial_number)
         return Date(new_date.year, new_date.month, new_date.day)
+
+    def __eq__(self, value: Date) -> bool:
+        return True if self.ISO() == value.ISO() else False
+
+    def __repr__(self) -> str:
+        return self.ISO()
+
+    def __lt__(self, value: Date) -> bool:
+        return self.date() < value.date()
+
+    def __le__(self, value: Date) -> bool:
+        return self.date() <= value.date()
+
+    def __ge__(self, value: Date) -> bool:
+        return self.date() >= value.date()
+
+    def __gt__(self, value: Date) -> bool:
+        return self.date() > value.date()
 
     def day_of_month(self) -> int:
         """

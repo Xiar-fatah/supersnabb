@@ -3,3 +3,4 @@ python-dateutil
 ruff==0.1.14
 pytest==7.4.4
 coverage==7.4.1
+pandas==2.2.0
