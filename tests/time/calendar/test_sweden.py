@@ -1,4 +1,4 @@
-from supersnabb.time.date import Date
+from supersnabb.time.date import Date, Tenor
 from supersnabb.time.calendar.sweden import Sweden
 from supersnabb.time.business_day_convention import BusinessDayConvention
 import QuantLib as ql
@@ -38,6 +38,54 @@ def test_swedish_calendar_ql():
         assert (
             ql_sweden.adjust(ql_dt, ql.Unadjusted).ISO()
             == Sweden().adjust(ss_dt, BusinessDayConvention.UNADJUSTED).ISO()
+        )
+        assert (
+            ql_sweden.advance(ql_dt, ql.Period("1D"), ql.ModifiedFollowing).ISO()
+            == Sweden()
+            .advance(ss_dt, Tenor("1D"), BusinessDayConvention.MODIFIEDFOLLOWING)
+            .ISO()
+        )
+        assert (
+            ql_sweden.advance(ql_dt, ql.Period("1W"), ql.ModifiedFollowing).ISO()
+            == Sweden()
+            .advance(ss_dt, Tenor("1W"), BusinessDayConvention.MODIFIEDFOLLOWING)
+            .ISO()
+        )
+        assert (
+            ql_sweden.advance(ql_dt, ql.Period("1M"), ql.ModifiedFollowing).ISO()
+            == Sweden()
+            .advance(ss_dt, Tenor("1M"), BusinessDayConvention.MODIFIEDFOLLOWING)
+            .ISO()
+        )
+        assert (
+            ql_sweden.advance(ql_dt, ql.Period("1Y"), ql.ModifiedFollowing).ISO()
+            == Sweden()
+            .advance(ss_dt, Tenor("1Y"), BusinessDayConvention.MODIFIEDFOLLOWING)
+            .ISO()
+        )
+        assert (
+            ql_sweden.advance(ql_dt, ql.Period("-1D"), ql.ModifiedFollowing).ISO()
+            == Sweden()
+            .advance(ss_dt, Tenor("-1D"), BusinessDayConvention.MODIFIEDFOLLOWING)
+            .ISO()
+        )
+        assert (
+            ql_sweden.advance(ql_dt, ql.Period("-1W"), ql.ModifiedFollowing).ISO()
+            == Sweden()
+            .advance(ss_dt, Tenor("-1W"), BusinessDayConvention.MODIFIEDFOLLOWING)
+            .ISO()
+        )
+        assert (
+            ql_sweden.advance(ql_dt, ql.Period("-1M"), ql.ModifiedFollowing).ISO()
+            == Sweden()
+            .advance(ss_dt, Tenor("-1M"), BusinessDayConvention.MODIFIEDFOLLOWING)
+            .ISO()
+        )
+        assert (
+            ql_sweden.advance(ql_dt, ql.Period("-1Y"), ql.ModifiedFollowing).ISO()
+            == Sweden()
+            .advance(ss_dt, Tenor("-1Y"), BusinessDayConvention.MODIFIEDFOLLOWING)
+            .ISO()
         )
 
 

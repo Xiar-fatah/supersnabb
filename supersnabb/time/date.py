@@ -39,7 +39,7 @@ class Tenor:
 
     def __add__(self, value) -> Tenor:
         print(f"{value = }")
-        if isinstance(value.date(), datetime.date):
+        if isinstance(value, Date):
             return self._add_tenor_to_date(value, self.length, self.unit, "add")
         elif isinstance(value, Tenor):
             if self.unit != value.unit:
@@ -75,33 +75,35 @@ class Tenor:
 
         Parameters
         ----------
-        date : datetime.date
+        date : Date
             The date to add the tenor to.
         fixing : int
             The number of units to add to the date.
         time_unit : str
             The unit of the tenor, can be "D", "W", "M" or "Y".
         """
-        if unit == "D":
-            if func == "sub":
-                return dt - relativedelta(days=length)
-            else:
-                return dt + relativedelta(days=length)
-        elif unit == "W":
-            if func == "sub":
-                return dt - relativedelta(weeks=length)
-            else:
-                return dt + relativedelta(weeks=length)
-        elif unit == "M":
-            if func == "sub":
-                return dt - relativedelta(months=length)
-            else:
-                return dt + relativedelta(months=length)
-        elif unit == "Y":
-            if func == "sub":
-                return dt - relativedelta(years=length)
-            else:
-                return dt + relativedelta(years=length)
+
+        def create_date(dt: datetime.date) -> Date:
+            return Date(dt.year, dt.month, dt.day)
+
+        if func == "sub":
+            if unit == "D":
+                return create_date(dt.date() - relativedelta(days=length))
+            elif unit == "W":
+                return create_date(dt.date() - relativedelta(weeks=length))
+            elif unit == "M":
+                return create_date(dt.date() - relativedelta(months=length))
+            elif unit == "Y":
+                return create_date(dt.date() - relativedelta(years=length))
+        else:
+            if unit == "D":
+                return create_date(dt.date() + relativedelta(days=length))
+            elif unit == "W":
+                return create_date(dt.date() + relativedelta(weeks=length))
+            elif unit == "M":
+                return create_date(dt.date() + relativedelta(months=length))
+            elif unit == "Y":
+                return create_date(dt.date() + relativedelta(years=length))
 
     def __mul__(self, value: int) -> Tenor:
         if not isinstance(value, int):
