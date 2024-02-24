@@ -1,7 +1,7 @@
 import QuantLib as ql
 from supersnabb.time.date import Tenor, Date
 from supersnabb.time.schedule import Schedule
-from supersnabb.time.calendar.sweden import Sweden
+from supersnabb.time.calendars.sweden import Sweden
 from supersnabb.time.business_day_convention import BusinessDayConvention
 from datetime import date
 from dateutil.relativedelta import relativedelta

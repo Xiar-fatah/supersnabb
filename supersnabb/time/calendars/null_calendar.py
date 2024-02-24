@@ -1,4 +1,4 @@
-from supersnabb.time.calendar.calendar import Calendar
+from supersnabb.time.calendar import Calendar
 from supersnabb.time.date import Date
 
 

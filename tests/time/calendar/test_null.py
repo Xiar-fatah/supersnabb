@@ -1,5 +1,5 @@
 from supersnabb.time.date import Date
-from supersnabb.time.calendar.null_calendar import NullCalendar
+from supersnabb.time.calendars.null_calendar import NullCalendar
 from supersnabb.time.business_day_convention import BusinessDayConvention
 import QuantLib as ql
 from datetime import date

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from supersnabb.time.date import Date, Tenor
-from supersnabb.time.calendar.calendar import Calendar
-from supersnabb.time.calendar.null_calendar import NullCalendar
+from supersnabb.time.calendar import Calendar
+from supersnabb.time.calendars.null_calendar import NullCalendar
 from typing import Union, Optional
 
 
@@ -89,6 +89,13 @@ class Schedule:
 
     def __len__(self):
         return len(self._dates)
+
+    @property
+    def has_is_regular(self):
+        """
+        Returns a boolean indicating whether the schedule has is_regular or not.
+        """
+        return len(self._is_regular) != 0
 
     @property
     def is_regular(self):

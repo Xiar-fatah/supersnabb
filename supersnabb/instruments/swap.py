@@ -3,7 +3,6 @@ from supersnabb.time.date import Date
 
 
 class Swap(Instrument):
-    pass
 
     def start_date(self) -> Date:
         pass
