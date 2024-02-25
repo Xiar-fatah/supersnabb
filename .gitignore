@@ -4,6 +4,7 @@ __pycache__/
 *.py[cod]
 
 # notebooks
+.ipynb_checkpoints
 
 # Coverage
 tests/htmlcov/
