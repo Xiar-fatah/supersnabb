@@ -6,6 +6,10 @@ from typing import List
 import pandas as pd
 
 
+class ForwardCurve(Interpolation):
+    pass
+
+
 class DiscountCurve(Interpolation):
     def __init__(
         self,
