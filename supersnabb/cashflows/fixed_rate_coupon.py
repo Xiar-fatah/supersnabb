@@ -20,9 +20,7 @@ class FixedRateCoupon(Coupon):
         start_ref_date: Date,
         end_ref_date: Date,
         daycount: Daycounter,
-        discount_curve: Optional[
-            DiscountCurve
-        ] = None,  # Remove optionality in the future
+        discount_curve: DiscountCurve,
     ):
         self.payment_date = payment_date
         self.nominal = nominal
@@ -83,7 +81,7 @@ class FixedRateLeg:
         self.calendar = calendar
         self.payment_lag = payment_lag
         self.discount_curve = discount_curve
-        self.coupons = self._create_coupons()
+        self.coupons = self._create_fixed_coupons()
 
     @property
     def cashflows(self):
@@ -103,7 +101,7 @@ class FixedRateLeg:
             }
         return pd.DataFrame.from_dict(_).T
 
-    def _create_coupons(self):
+    def _create_fixed_coupons(self) -> list:
         # Generate the first coupon
         coupons = []
         fixed_schedule_dates = self.fixed_schedule.dates

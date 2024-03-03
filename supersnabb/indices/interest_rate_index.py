@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 
-class InterestRateIndex(meta=ABCMeta):
+class InterestRateIndex(metaclass=ABCMeta):
     @abstractmethod
     def forecast_fixing(self):
         pass
