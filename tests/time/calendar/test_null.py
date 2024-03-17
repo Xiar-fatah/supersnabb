@@ -20,4 +20,4 @@ def test_swedish_calendar_ql():
         assert ql_null.isBusinessDay(ql_dt) == NullCalendar().is_business_day(ss_dt)
 
 
-jenkins = "2"
+_ = "2"
